@@ -187,31 +187,31 @@ signTx.addEventListener("click", async () => {
   );
   const baseAddr = CardanoWasm.BaseAddress.from_address(addr);
   const keyHash = baseAddr.payment_cred().to_keyhash();
-  
+
   let newinputs = [];
-  utxos.forEach(item => {
+  utxos.forEach((item) => {
     newinputs.push({
       txid: item.tx_hash,
       index: item.tx_index,
       value: item.amount,
-      tokens: transformTokensData(item.assets)
+      tokens: transformTokensData(item.assets),
     });
   });
   let policyId = "";
   let assetName = "";
   let totalTokenIn = BigNumber(0);
   let totalAdaIn = BigNumber(0);
-  newinputs.forEach(item => {
+  newinputs.forEach((item) => {
     let valueIn = CardanoWasm.Value.new(
       CardanoWasm.BigNum.from_str(BigNumber(item.value).toFixed())
     );
     totalAdaIn = totalAdaIn.plus(item.value);
 
     let multiAssetIn = CardanoWasm.MultiAsset.new();
-    item.tokens.forEach(token => {
-      console.log("--------->token", token)
+    item.tokens.forEach((token) => {
+      console.log("--------->token", token);
       let assetIn = CardanoWasm.Assets.new();
-      token.assets.forEach(asset => {
+      token.assets.forEach((asset) => {
         assetIn.insert(
           CardanoWasm.AssetName.new(Buffer.from(asset.assetName)),
           CardanoWasm.BigNum.from_str(BigNumber(asset.value).toFixed())
@@ -267,7 +267,7 @@ signTx.addEventListener("click", async () => {
   );
 
   const ttl = await getTtlFromIBP();
-  console.log(`ttl:>>`, ttl)
+  console.log(`ttl:>>`, ttl);
   txBuilder.set_ttl(ttl + 2000);
 
   // calculate the min fee required and send any change to an address
@@ -307,6 +307,7 @@ createTx.addEventListener("click", () => {
     return;
   }
 
+  const shelleyOutputAddress = CardanoWasm.Address.from_bech32(SEND_TO_ADDRESS);
   const output = CardanoWasm.TransactionOutput.new(
     CardanoWasm.Address.from_bech32(SEND_TO_ADDRESS),
     CardanoWasm.Value.new(CardanoWasm.BigNum.from_str("1000002"))
@@ -320,10 +321,10 @@ createTx.addEventListener("click", () => {
     includeTargets: [
       {
         // do not specify value, the connector will use minimum value
-        address:
-          "00756c95f9967c214e571500a0140b88f6dd9c4a7444e74acc1841ce92c3892366f174a76af9252f78368f5747d3055ab3568ea3b6bf40b01e",
+        address: Buffer.from(shelleyOutputAddress.to_bytes()).toString("hex"),
         assets: {
-          "2c9d0ecfc2ee1288056df15be4196d8ded73db345ea5b4cd5c7fac3f.76737562737465737435": 1,
+          // "c4782a1d83bdf87093bda84ec73f3432506d3d6f3dcdfb94bd643109.mstest": 1,
+          "c4782a1d83bdf87093bda84ec73f3432506d3d6f3dcdfb94bd643109.6d7374657374": 1,
         },
       },
     ],
